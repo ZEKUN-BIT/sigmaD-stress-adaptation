@@ -4,6 +4,8 @@ Compare mutant and WT growth as the fraction of time under stress changes. Each 
 
 ## Model quantities
 
+For the assumptions, symbol definitions, and step-by-step derivation from the population-growth equation, see [Model definition and derivation](MODEL.md).
+
 For each mutant and one selected stress condition, define the growth-rate differences:
 
 $$
@@ -26,6 +28,8 @@ $$
 $$
 
 Here, $T$ is total time in minutes and $\ln$ is the natural logarithm. At fixed $p$, $s(p)$ is independent of $T$, while the accumulated population ratio depends on $T$. The scripts calculate rates and thresholds; they do not require $T$ or output population sizes.
+
+With equal starting populations, $R(0)=1$ and $R(T)=\exp[T s(p)]$. With unequal starting populations, $R(T)=R(0)\exp[T s(p)]$: positive $s(p)$ means that the ratio increases, without necessarily becoming greater than 1.
 
 This interpretation treats each supplied maximum growth rate as a constant rate within its condition. It does not model lag phases, resource limitation, or changes in growth rate with population density. The results are point estimates; confidence intervals and statistical significance are not calculated.
 
