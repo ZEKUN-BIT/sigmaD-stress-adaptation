@@ -1,21 +1,17 @@
-# Code for σD variant analysis
+# σD Stress Adaptation Models
 
-This repository contains the two analysis workflows used in the study of σD variants and strain adaptation to stress.
+Decision-tree analysis and growth modeling for studying how variants of the housekeeping sigma factor σD (RpoD) affect *Escherichia coli* adaptation to acid, osmotic, and isobutanol stress.
+
+Associated study: *Natural evolution drives general stress fitness by attenuating the assembly of bacterial house-keeping transcriptional machinery*.
 
 ## Models
 
-| Folder | Purpose | Main scripts |
+| Folder | Purpose | Manuscript context |
 | --- | --- | --- |
-| [Growth model](growth_model/) | Compare mutant and WT growth across different stress time fractions. | `calculate_growth_model.py`, `plot_growth_heatmap.py` |
-| [Decision-tree model](decision_tree_model/) | Analyze variant features associated with stress adaptation, following Supplementary Note S1. | `train.py`, `train_v2.py`, `train_v3.py` |
+| [Decision-tree model](decision_tree_model/) | Relate σD variant features to stress-adaptation phenotypes. | `train.py` follows the original Supplementary Note S1; `train_v2.py` and `train_v3.py` retain additional feature-subset variants. |
+| [Growth model](growth_model/) | Compare mutant and WT growth using time-weighted growth-rate differences across normal and stressed conditions. | Revised model developed during manuscript revision; replaces the original Note S2 population-size simulation. |
 
-```text
-.
-├── growth_model/          # Growth calculations and heatmap code
-├── decision_tree_model/   # Decision-tree training and prediction code
-├── LICENSE
-└── README.md
-```
+The original manuscript describes the earlier growth simulation in Fig. 5j; the growth workflow here was developed during revision. The decision-tree workflow uses single-tree classifiers. The study's GENIE3 random-forest analysis of transcriptional regulatory networks is a separate analysis and is not included here.
 
 ## Getting started
 
