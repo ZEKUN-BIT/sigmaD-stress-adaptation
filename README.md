@@ -6,12 +6,12 @@ Associated study: *Natural evolution drives general stress fitness by attenuatin
 
 ## Models
 
-| Folder | Purpose | Manuscript context |
+| Folder | Purpose | Main scripts |
 | --- | --- | --- |
-| [Decision-tree model](decision_tree_model/) | Relate σD variant features to stress-adaptation phenotypes. | `train.py` follows the original Supplementary Note S1; `train_v2.py` and `train_v3.py` retain additional feature-subset variants. |
-| [Growth model](growth_model/) | Compare mutant and WT growth using time-weighted growth-rate differences across normal and stressed conditions. | Revised model developed during manuscript revision; replaces the original Note S2 population-size simulation. |
+| [Decision-tree model](decision_tree_model/) | Relate σD variant features to stress-adaptation phenotypes. | `train.py` (Supplementary Note S1), `train_v2.py`, `train_v3.py` |
+| [Growth model](growth_model/) | Compare mutant and WT growth using time-weighted growth-rate differences across normal and stressed conditions. | `calculate_growth_model.py`, `plot_growth_heatmap.py` |
 
-The original manuscript describes the earlier growth simulation in Fig. 5j; the growth workflow here was developed during revision. The decision-tree workflow uses single-tree classifiers. The study's GENIE3 random-forest analysis of transcriptional regulatory networks is a separate analysis and is not included here.
+The decision-tree workflow uses single-tree classifiers. The study's GENIE3 random-forest analysis of transcriptional regulatory networks is a separate analysis and is not included here.
 
 ## Getting started
 
