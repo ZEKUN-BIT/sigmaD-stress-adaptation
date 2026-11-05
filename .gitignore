@@ -1,6 +1,7 @@
 # Experimental data and generated outputs are not part of this code release.
 data/
 results/
+result/
 outputs/
 figures/
 *.csv
@@ -23,6 +24,7 @@ figures/
 *.tiff
 *.pdf
 *.svg
+*.dot
 *.docx
 *.zip
 
@@ -42,5 +44,6 @@ dist/
 *.pem
 *.key
 .DS_Store
+__MACOSX/
 .idea/
 .vscode/
