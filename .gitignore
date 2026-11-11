@@ -1,4 +1,4 @@
-# Experimental data and generated outputs are not part of this code release.
+# Keep experimental inputs and unselected generated outputs local.
 data/
 results/
 result/
@@ -27,6 +27,13 @@ figures/
 *.dot
 *.docx
 *.zip
+
+# Selected experiment 3 figure approved for publication.
+!/growth_model/figures/
+/growth_model/figures/*
+!/growth_model/figures/experiment_3_growth_advantage_heatmap_vertical.png
+!/growth_model/figures/experiment_3_growth_advantage_heatmap_vertical.pdf
+!/growth_model/figures/experiment_3_growth_advantage_heatmap_vertical.svg
 
 # Python environments and caches.
 __pycache__/

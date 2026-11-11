@@ -26,4 +26,4 @@ Input formats and example commands are provided in each model folder. Experiment
 
 ## Code and data availability
 
-The analysis code is available in this repository under the [MIT License](LICENSE). Experimental data, model result tables, and result figures are not included.
+The analysis code is available in this repository under the [MIT License](LICENSE). The selected [experiment 3 growth-model heatmap](growth_model/README.md#selected-result-experiment-3) is included. Experimental input data and numerical result tables are not included.

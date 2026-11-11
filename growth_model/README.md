@@ -100,11 +100,19 @@ For an illustrative example using artificial values, let $a=-0.001$ and $b=0.002
 
 ## Reading the heatmap
 
-The plotting script saves `growth_advantage_heatmap_Arial_original_style` in PNG, PDF, and SVG formats. Rows are mutants, columns are stress time fractions shown as percentages, and the three panels represent separate stress conditions.
+The plotting script saves `growth_advantage_heatmap_vertical` in PNG, PDF, and SVG formats. The three panels are stacked vertically in the order Acid, NaCl, and IBOH. Columns are mutants; the vertical axis shows stress time fractions increasing from 0% at the bottom to 100% at the top. Mutant labels are shared across the panels and rotated by 45 degrees.
 
-Red indicates positive $s(p)$ and blue indicates negative $s(p)$, using a shared scale centered on zero. The colorbar displays values in units of 10⁻³ min⁻¹: a displayed value of 1 corresponds to `s_min_inv = 0.001`. CSV values remain in min⁻¹ and are not multiplied by 1000. No normalization is applied to individual rows.
+Red indicates positive $s(p)$ and blue indicates negative $s(p)$, using a shared scale centered on zero. The colorbar displays values in units of 10⁻³ min⁻¹: a displayed value of 1 corresponds to `s_min_inv = 0.001`. CSV values remain in min⁻¹ and are not multiplied by 1000. No normalization is applied to individual mutants.
 
-The `>` and `<` markers locate $p^*$ and indicate whether the mutant advantage occurs above or below that threshold. In the `All p` strip, `+` means mutant advantage throughout the range and `−` means WT advantage throughout. Colors and markers describe model point estimates, not statistical significance.
+The upward and downward triangles locate $p^*$ and indicate whether the mutant advantage occurs at higher or lower stress time fractions. In the `All p` strip above each panel, `+` means mutant advantage throughout the range and `−` means WT advantage throughout. Each symbol is aligned with its mutant column. Colors and markers describe model point estimates, not statistical significance.
+
+## Selected result: experiment 3
+
+The figure below uses the supplied growth rates from experiment 3 to compare 42 mutants with WT at 101 stress time fractions per condition. The three panels share the same color scale. The layout transposes the heatmaps and stacks the conditions vertically; the calculated values and thresholds are preserved.
+
+![Experiment 3 growth-model heatmap with Acid, NaCl, and IBOH panels stacked vertically.](figures/experiment_3_growth_advantage_heatmap_vertical.png)
+
+Download the [PDF](figures/experiment_3_growth_advantage_heatmap_vertical.pdf) or [editable SVG](figures/experiment_3_growth_advantage_heatmap_vertical.svg). The PNG is exported at 600 dpi; all formats use a 183 × 210 mm canvas, Arial text, 9.5 pt strain labels and numeric ticks, and 12 pt titles. The figure contains point estimates from the supplied maximum growth rates; uncertainty is not estimated.
 
 ## Tests
 

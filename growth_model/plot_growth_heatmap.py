@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plot the measured growth model; all displayed rates use min^-1.
+"""Plot three stacked growth-model heatmaps; all rates use min^-1.
 
 Run: python plot_growth_heatmap.py --input source_data.csv
 Dependencies: numpy, pandas, matplotlib
@@ -54,22 +54,25 @@ def create_figure(p, matrices, summary):
         "mathtext.sf": "Arial", "mathtext.default": "regular",
         "mathtext.fallback": None,
         "axes.linewidth": 0.5, "xtick.major.width": 0.5,
-        "xtick.major.size": 2.5, "ytick.major.size": 0,
+        "xtick.major.size": 2.5, "ytick.major.size": 2.5,
         "pdf.fonttype": 42, "ps.fonttype": 42, "svg.fonttype": "none",
         "axes.unicode_minus": True, "text.usetex": False,
         "figure.constrained_layout.use": False,
     })
     fig = plt.figure(figsize=np.array(SIZE_MM) / 25.4, dpi=150, facecolor="white")
-    grid = fig.add_gridspec(1, 3, left=0.105, right=0.98, bottom=0.245, top=0.93, wspace=0.16)
+    grid = fig.add_gridspec(3, 1, left=0.105, right=0.98, bottom=0.33, top=0.92, hspace=0.34)
     max_abs = max(float(np.max(np.abs(matrix))) for matrix in matrices.values())
     limit = float(np.ceil(max_abs / DISPLAY_SCALE))
     norm = TwoSlopeNorm(vmin=-limit, vcenter=0, vmax=limit)
     cmap = plt.get_cmap("RdBu_r")
     p_edges = np.r_[0, (p[1:] + p[:-1])/2, 1] * 100
-    y_edges = np.arange(len(STRAINS) + 1) - 0.5
+    strain_edges = np.arange(len(STRAINS) + 1) - 0.5
     metadata = {"size_mm": list(SIZE_MM), "rate_unit": "min^-1", "display_scale": DISPLAY_SCALE,
                 "color_limits_display_units": [-limit, limit], "p_points": len(p),
-                "row_order": STRAINS, "threshold_markers": int(summary.p_star.notna().sum()),
+                "layout": "stacked_transposed", "column_order": STRAINS,
+                "panel_order": CONDITIONS, "stress_fraction_increases": "upward",
+                "strain_label_rotation_degrees": 45,
+                "threshold_markers": int(summary.p_star.notna().sum()),
                 "all_p_symbols": int(summary.p_star.isna().sum()), "row_standardization": False,
                 "clipping": False, "interpolation_between_strains": False,
                 "font_family": "Arial", "font_path": arial_path,
@@ -77,56 +80,58 @@ def create_figure(p, matrices, summary):
                 "panel_title_font_pt": 12, "overall_title_font_pt": 12,
                 "colour_map": "RdBu_r", "panel_letters": False}
 
-    heat_axes = []
     for k, (condition, title) in enumerate(zip(CONDITIONS, TITLES)):
-        inner = grid[k].subgridspec(1, 2, width_ratios=[1, 0.13], wspace=0.03)
-        ax = fig.add_subplot(inner[0])
-        status_ax = fig.add_subplot(inner[1], sharey=ax)
-        heat_axes.append(ax)
-        mesh = ax.pcolormesh(p_edges, y_edges, matrices[condition]/DISPLAY_SCALE,
+        inner = grid[k].subgridspec(2, 1, height_ratios=[0.10, 1], hspace=0.13)
+        ax = fig.add_subplot(inner[1])
+        status_ax = fig.add_subplot(inner[0], sharex=ax)
+        ax.set_gid(f"heatmap-{condition}")
+        status_ax.set_gid(f"all-p-{condition}")
+        mesh = ax.pcolormesh(strain_edges, p_edges, matrices[condition].T/DISPLAY_SCALE,
                              shading="flat", cmap=cmap, norm=norm, rasterized=False)
-        ax.hlines(y_edges[1:-1], 0, 100, colors="white", linewidth=0.22, alpha=0.65)
-        ax.set(xlim=(0, 100), ylim=(len(STRAINS)-0.5, -0.5), xticks=[0, 25, 50, 75, 100])
-        ax.set_yticks(np.arange(len(STRAINS)))
-        ax.set_yticklabels(STRAINS if k == 0 else [""]*len(STRAINS))
+        ax.vlines(strain_edges[1:-1], 0, 100, colors="white", linewidth=0.22, alpha=0.65)
+        ax.set(xlim=(-0.5, len(STRAINS)-0.5), ylim=(0, 100), yticks=[0, 25, 50, 75, 100])
+        ax.set_xticks(np.arange(len(STRAINS)))
+        ax.set_xticklabels(STRAINS, rotation=45, ha="right", va="top", rotation_mode="anchor")
+        ax.tick_params(axis="x", labelbottom=k == len(CONDITIONS)-1,
+                       bottom=k == len(CONDITIONS)-1, pad=3)
         ax.tick_params(axis="y", pad=4)
-        if k == 0:
-            ax.set_ylabel("Mutant", labelpad=7)
-        ax.set_title(title, pad=9, fontweight="bold")
         for spine in ax.spines.values():
             spine.set_visible(True)
             spine.set_edgecolor("#777777")
-        status_ax.set(xlim=(0, 1), ylim=ax.get_ylim())
+        status_ax.set(ylim=(0, 1))
         status_ax.axis("off")
-        status_ax.text(0.5, 1.008, "All p", ha="center", va="bottom", fontsize=6.5,
+        status_ax.set_title(title, pad=6, fontweight="bold")
+        status_ax.text(-0.01, 0.5, "All p", ha="right", va="center", fontsize=6.5,
                        transform=status_ax.transAxes)
         selected = summary[summary.stress == condition].set_index("strain").loc[STRAINS]
         for i, row in enumerate(selected.itertuples()):
             if pd.notna(row.p_star):
-                marker = ">" if row.advantage == "p > p_star" else "<"
-                ax.plot(row.p_star * 100, i, marker=marker, color="#111111", markersize=3.2,
+                marker = "^" if row.advantage == "p > p_star" else "v"
+                ax.plot(i, row.p_star * 100, marker=marker, color="#111111", markersize=3.2,
                         markeredgewidth=0.3, linestyle="none", clip_on=False, zorder=4)
             else:
                 sign = "+" if row.classification == "beneficial_both" else "\u2212"
-                status_ax.text(0.5, i, sign, ha="center", va="center", fontsize=8, fontweight="bold")
+                status_ax.text(i, 0.5, sign, ha="center", va="center", fontsize=8, fontweight="bold")
 
-    fig.text(0.5, 0.99, "Model-predicted growth advantage", ha="center", va="top", fontsize=12)
-    fig.text(0.53, 0.205, "Stress time fraction, p (%)", ha="center", va="center", fontsize=8)
-    color_ax = fig.add_axes([0.235, 0.15, 0.55, 0.016])
+    fig.text(0.5, 0.985, "Model-predicted growth advantage", ha="center", va="top", fontsize=12)
+    fig.text(0.025, 0.625, "Stress time fraction, p (%)", ha="center", va="center",
+             rotation=90, fontsize=8)
+    fig.text(0.5425, 0.248, "Mutant", ha="center", va="center", fontsize=8)
+    color_ax = fig.add_axes([0.235, 0.18, 0.55, 0.016])
     colorbar = fig.colorbar(mesh, cax=color_ax, orientation="horizontal", ticks=[-limit, -limit/2, 0, limit/2, limit])
     colorbar.solids.set_rasterized(False)
     colorbar.set_label(r"Relative log-growth rate, $s(p)$ ($10^{-3}$ min$^{-1}$)", labelpad=3, fontsize=8)
     colorbar.outline.set_linewidth(0.5)
     colorbar.ax.tick_params(labelsize=9.5, length=2)
-    fig.text(0.235, 0.179, "WT advantage", ha="left", fontsize=7, color="#2166AC")
-    fig.text(0.785, 0.179, "Mutant advantage", ha="right", fontsize=7, color="#B2182B")
+    fig.text(0.235, 0.209, "WT advantage", ha="left", fontsize=7, color="#2166AC")
+    fig.text(0.785, 0.209, "Mutant advantage", ha="right", fontsize=7, color="#B2182B")
     legend_handles = [
-        Line2D([], [], marker=">", color="black", linestyle="none", markersize=4, label=r"$p^*$; advantage at higher $p$"),
-        Line2D([], [], marker="<", color="black", linestyle="none", markersize=4, label=r"$p^*$; advantage at lower $p$"),
+        Line2D([], [], marker="^", color="black", linestyle="none", markersize=4, label=r"$p^*$; advantage at higher $p$"),
+        Line2D([], [], marker="v", color="black", linestyle="none", markersize=4, label=r"$p^*$; advantage at lower $p$"),
         Line2D([], [], marker="$+$", color="black", linestyle="none", markersize=6, label="All p: mutant advantage"),
         Line2D([], [], marker="$\u2212$", color="black", linestyle="none", markersize=6, label="All p: WT advantage"),
     ]
-    fig.legend(handles=legend_handles, loc="lower center", bbox_to_anchor=(0.52, 0.033),
+    fig.legend(handles=legend_handles, loc="lower center", bbox_to_anchor=(0.52, 0.055),
                ncol=2, frameon=False, fontsize=7, columnspacing=2.5, handletextpad=0.6,
                labelspacing=0.7, handlelength=1.3)
     fig.text(0.52, 0.015, "Point estimates from supplied \u03bcmax values; uncertainty not estimated.",
@@ -138,7 +143,7 @@ def export_figure(fig, output):
     output.mkdir(parents=True, exist_ok=True)
     # Keep the specified physical canvas size; do not crop with bbox_inches='tight'.
     for suffix in ["pdf", "svg", "png"]:
-        fig.savefig(output / f"growth_advantage_heatmap_Arial_original_style.{suffix}", dpi=600 if suffix == "png" else 300, facecolor="white")
+        fig.savefig(output / f"growth_advantage_heatmap_vertical.{suffix}", dpi=600 if suffix == "png" else 300, facecolor="white")
 
 
 def main():
