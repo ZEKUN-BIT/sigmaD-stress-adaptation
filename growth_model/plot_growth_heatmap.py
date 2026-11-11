@@ -22,7 +22,7 @@ from calculate_growth_model import STRAINS, calculate, load_rates
 
 CONDITIONS = MODEL_CONDITIONS[1:]
 TITLES = CONDITIONS
-SIZE_MM = (183, 210)
+SIZE_MM = (183, 190)
 DISPLAY_SCALE = 1e-3  # A displayed value of 1 means 0.001 min^-1.
 
 
@@ -47,7 +47,7 @@ def create_figure(p, matrices, summary):
     plt.rcParams.update({
         "font.family": "Arial",
         "font.sans-serif": ["Arial"],
-        "font.size": 9.5, "axes.labelsize": 8, "axes.titlesize": 12,
+        "font.size": 9.5, "axes.labelsize": 10.5, "axes.titlesize": 12,
         "xtick.labelsize": 9.5, "ytick.labelsize": 9.5,
         "mathtext.fontset": "custom", "mathtext.rm": "Arial",
         "mathtext.it": "Arial:italic", "mathtext.bf": "Arial:bold",
@@ -60,7 +60,7 @@ def create_figure(p, matrices, summary):
         "figure.constrained_layout.use": False,
     })
     fig = plt.figure(figsize=np.array(SIZE_MM) / 25.4, dpi=150, facecolor="white")
-    grid = fig.add_gridspec(3, 1, left=0.105, right=0.98, bottom=0.33, top=0.92, hspace=0.34)
+    grid = fig.add_gridspec(3, 1, left=0.105, right=0.98, bottom=0.345, top=0.92, hspace=0.28)
     max_abs = max(float(np.max(np.abs(matrix))) for matrix in matrices.values())
     limit = float(np.ceil(max_abs / DISPLAY_SCALE))
     norm = TwoSlopeNorm(vmin=-limit, vcenter=0, vmax=limit)
@@ -76,12 +76,13 @@ def create_figure(p, matrices, summary):
                 "all_p_symbols": int(summary.p_star.isna().sum()), "row_standardization": False,
                 "clipping": False, "interpolation_between_strains": False,
                 "font_family": "Arial", "font_path": arial_path,
-                "tick_font_pt": 9.5, "axis_label_font_pt": 8,
+                "tick_font_pt": 9.5, "axis_label_font_pt": 10.5,
+                "legend_font_pt": 9.5, "annotation_font_pt": 9.5,
                 "panel_title_font_pt": 12, "overall_title_font_pt": 12,
                 "colour_map": "RdBu_r", "panel_letters": False}
 
     for k, (condition, title) in enumerate(zip(CONDITIONS, TITLES)):
-        inner = grid[k].subgridspec(2, 1, height_ratios=[0.10, 1], hspace=0.13)
+        inner = grid[k].subgridspec(2, 1, height_ratios=[0.10, 1], hspace=0.19)
         ax = fig.add_subplot(inner[1])
         status_ax = fig.add_subplot(inner[0], sharex=ax)
         ax.set_gid(f"heatmap-{condition}")
@@ -101,7 +102,7 @@ def create_figure(p, matrices, summary):
         status_ax.set(ylim=(0, 1))
         status_ax.axis("off")
         status_ax.set_title(title, pad=6, fontweight="bold")
-        status_ax.text(-0.01, 0.5, "All p", ha="right", va="center", fontsize=6.5,
+        status_ax.text(-0.01, 0.5, "All p", ha="right", va="center", fontsize=9.5,
                        transform=status_ax.transAxes)
         selected = summary[summary.stress == condition].set_index("strain").loc[STRAINS]
         for i, row in enumerate(selected.itertuples()):
@@ -111,31 +112,31 @@ def create_figure(p, matrices, summary):
                         markeredgewidth=0.3, linestyle="none", clip_on=False, zorder=4)
             else:
                 sign = "+" if row.classification == "beneficial_both" else "\u2212"
-                status_ax.text(i, 0.5, sign, ha="center", va="center", fontsize=8, fontweight="bold")
+                status_ax.text(i, 0.5, sign, ha="center", va="center", fontsize=9.5, fontweight="bold")
 
     fig.text(0.5, 0.985, "Model-predicted growth advantage", ha="center", va="top", fontsize=12)
-    fig.text(0.025, 0.625, "Stress time fraction, p (%)", ha="center", va="center",
-             rotation=90, fontsize=8)
-    fig.text(0.5425, 0.248, "Mutant", ha="center", va="center", fontsize=8)
-    color_ax = fig.add_axes([0.235, 0.18, 0.55, 0.016])
+    fig.text(0.025, 0.6325, "Stress time fraction, p (%)", ha="center", va="center",
+             rotation=90, fontsize=10.5)
+    fig.text(0.5425, 0.274, "Mutant", ha="center", va="center", fontsize=10.5)
+    color_ax = fig.add_axes([0.235, 0.215, 0.55, 0.016])
     colorbar = fig.colorbar(mesh, cax=color_ax, orientation="horizontal", ticks=[-limit, -limit/2, 0, limit/2, limit])
     colorbar.solids.set_rasterized(False)
-    colorbar.set_label(r"Relative log-growth rate, $s(p)$ ($10^{-3}$ min$^{-1}$)", labelpad=3, fontsize=8)
+    colorbar.set_label(r"Relative log-growth rate, $s(p)$ ($10^{-3}$ min$^{-1}$)", labelpad=3, fontsize=10.5)
     colorbar.outline.set_linewidth(0.5)
     colorbar.ax.tick_params(labelsize=9.5, length=2)
-    fig.text(0.235, 0.209, "WT advantage", ha="left", fontsize=7, color="#2166AC")
-    fig.text(0.785, 0.209, "Mutant advantage", ha="right", fontsize=7, color="#B2182B")
+    fig.text(0.235, 0.245, "WT advantage", ha="left", fontsize=9.5, color="#2166AC")
+    fig.text(0.785, 0.245, "Mutant advantage", ha="right", fontsize=9.5, color="#B2182B")
     legend_handles = [
         Line2D([], [], marker="^", color="black", linestyle="none", markersize=4, label=r"$p^*$; advantage at higher $p$"),
         Line2D([], [], marker="v", color="black", linestyle="none", markersize=4, label=r"$p^*$; advantage at lower $p$"),
         Line2D([], [], marker="$+$", color="black", linestyle="none", markersize=6, label="All p: mutant advantage"),
         Line2D([], [], marker="$\u2212$", color="black", linestyle="none", markersize=6, label="All p: WT advantage"),
     ]
-    fig.legend(handles=legend_handles, loc="lower center", bbox_to_anchor=(0.52, 0.055),
-               ncol=2, frameon=False, fontsize=7, columnspacing=2.5, handletextpad=0.6,
-               labelspacing=0.7, handlelength=1.3)
-    fig.text(0.52, 0.015, "Point estimates from supplied \u03bcmax values; uncertainty not estimated.",
-             ha="center", va="center", fontsize=7, color="#444444")
+    fig.legend(handles=legend_handles, loc="lower center", bbox_to_anchor=(0.52, 0.065),
+               ncol=2, frameon=False, fontsize=9.5, columnspacing=2, handletextpad=0.6,
+               labelspacing=0.5, handlelength=1.3)
+    fig.text(0.52, 0.025, "Point estimates from supplied \u03bcmax values; uncertainty not estimated.",
+             ha="center", va="center", fontsize=9.5, color="#444444")
     return fig, metadata
 
 

@@ -112,7 +112,7 @@ The figure below uses the supplied growth rates from experiment 3 to compare 42 
 
 ![Experiment 3 growth-model heatmap with Acid, NaCl, and IBOH panels stacked vertically.](figures/experiment_3_growth_advantage_heatmap_vertical.png)
 
-Download the [PDF](figures/experiment_3_growth_advantage_heatmap_vertical.pdf) or [editable SVG](figures/experiment_3_growth_advantage_heatmap_vertical.svg). The PNG is exported at 600 dpi; all formats use a 183 × 210 mm canvas, Arial text, 9.5 pt strain labels and numeric ticks, and 12 pt titles. The figure contains point estimates from the supplied maximum growth rates; uncertainty is not estimated.
+Download the [PDF](figures/experiment_3_growth_advantage_heatmap_vertical.pdf) or [editable SVG](figures/experiment_3_growth_advantage_heatmap_vertical.svg). The PNG is exported at 600 dpi; all formats use a compact 183 × 190 mm canvas and Arial text. Axis and colorbar titles are 10.5 pt; strain labels, numeric ticks, legends, and annotations are 9.5 pt; panel and overall titles are 12 pt. The figure contains point estimates from the supplied maximum growth rates; uncertainty is not estimated.
 
 ## Tests
 
